@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "858868640381",
+    "project_id": "homeexpensive-1807b",
+    "storage_bucket": "homeexpensive-1807b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:858868640381:android:ae098031c744932ea71f14",
+        "android_client_info": {
+          "package_name": "com.homeExpensive_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCrCT8LE68At2q7goOaKfMBaypgfWYwMCA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
