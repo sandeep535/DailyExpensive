@@ -1,15 +1,12 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Button, Alert, TextInput, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, ToastAndroid,TextInput, TouchableOpacity } from 'react-native';
 import { useEffect, useState } from 'react';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import Ionicons from '@expo/vector-icons/Ionicons';
-import { AntDesign } from '@expo/vector-icons';
-import { Entypo } from '@expo/vector-icons';
-import { useForm } from 'react-hook-form';
 import { firebase } from '../FireBaseConfig';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../FireBaseConfig';
 import globalConstants from '../Consants/AppContstants';
+import AppLogo from '../Components/AppLogo';
+
 
 export default function Signup({ navigation }) {
     //const user = firebase.firestore().collection('Users');
@@ -33,6 +30,24 @@ export default function Signup({ navigation }) {
             });
     }
     function callAddAPI() {
+        
+        if(!name){
+            ToastAndroid.show("Please Enter User Name",ToastAndroid.SHORT);
+            return false;
+        }
+        if(!mobileNumber){
+            ToastAndroid.show("Please Enter Mobile Number",ToastAndroid.SHORT);
+            return false;
+        }
+        if(!email){
+            ToastAndroid.show("Please Enter Email",ToastAndroid.SHORT);
+            return false;
+        }
+        if(!password){
+            ToastAndroid.show("Please Enter Password",ToastAndroid.SHORT);
+            return false;
+        }
+       
         console.log("sign")
         createUserWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
@@ -50,11 +65,15 @@ export default function Signup({ navigation }) {
                 // ..
             });
     }
+    function callBackToLogin(){
+        navigation.navigate('Login');
+    }
     useEffect(() => {
 
     })
     return (
         <View style={styles.container}>
+            <AppLogo />
             <View style={styles.inputView}>
                 <TextInput
                     style={styles.input}
@@ -102,6 +121,11 @@ export default function Signup({ navigation }) {
             }}>
                 <Text style={styles.loginText}>Signup</Text>
             </TouchableOpacity>
+            <TouchableOpacity style={styles.loginBtn} onPress={() => {
+                callBackToLogin();
+            }}>
+                <Text style={styles.loginText}>LOGIN</Text>
+            </TouchableOpacity>
             <StatusBar style="auto" />
         </View>
     );
@@ -115,25 +139,30 @@ const styles = StyleSheet.create({
     },
     input: {
         height: 40,
-        width: '100%',
-        margin: 12,
+        width: 300,
+        margin: 10,
         borderWidth: 0,
         padding: 10,
+        fontSize:16
     },
     loginBtn:
     {
-        width: "80%",
+        width: 320,
         borderRadius: 25,
         height: 50,
         alignItems: "center",
         justifyContent: "center",
-        marginTop: 40,
+        marginTop: 10,
         backgroundColor: globalConstants.appThemeColor,
     },
+    loginText:{
+        color:'white',
+        fontSize:16,
+    },
     inputView: {
-        backgroundColor: globalConstants.appThemeColor,
+        backgroundColor: 'white',
         borderRadius: 10,
-        width: "80%",
+        width: 320,
         height: 60,
         marginBottom: 10,
         alignItems: "center",
@@ -143,5 +172,6 @@ const styles = StyleSheet.create({
         flex: 1,
         padding: 10,
         marginLeft: 20,
+        fontSize:18
     }
 });

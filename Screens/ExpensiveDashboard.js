@@ -1,18 +1,11 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Button, Alert, TextInput, ScrollView, Pressable, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TextInput,Dimensions, ScrollView, Pressable, TouchableOpacity } from 'react-native';
 import { useEffect, useState, useContext } from 'react';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import Ionicons from '@expo/vector-icons/Ionicons';
-import { AntDesign } from '@expo/vector-icons';
-import { Entypo } from '@expo/vector-icons';
-import { useForm } from 'react-hook-form';
-import { firebase, app } from '../FireBaseConfig';
-import { getFirestore, collection, addDoc, query, where, getDocs } from "firebase/firestore";
+import { AntDesign,Entypo,MaterialCommunityIcons } from '@expo/vector-icons';
+import {  app } from '../FireBaseConfig';
+import { getFirestore, collection, query, where, getDocs } from "firebase/firestore";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import MonthPicker from 'react-native-month-year-picker';
-import moment from 'moment';
 import { Dropdown } from 'react-native-element-dropdown';
-import { Dimensions, ActivityIndicator } from 'react-native';
 import LoadingSpinner from '../Components/LoadingSpinner';
 import AppContext from '../Context/appContext';
 import globalConstants from '../Consants/AppContstants';
@@ -29,6 +22,7 @@ export default function ExpensiveDashboard({ route, navigation }) {
     const [isLoader,setIsloader] = useState(false);
     const [spentAmount,seSpentAmount] = useState(0);
     const appContextValue = useContext(AppContext);
+    
 
     const [month, setMonth] = useState(null);
     const [isFocus, setIsFocus] = useState(false);
@@ -128,7 +122,13 @@ export default function ExpensiveDashboard({ route, navigation }) {
         }
         startDate = new Date(formatStartDate);
         endDate = new Date(formatEndDate);
-        let result = query(collectionRef, where('CapturedDate', '>=', startDate), where('CapturedDate', '<=', endDate));
+        var groupId = appContextValue.selectedGroupData;
+      
+        if(groupId){
+            groupId = groupId.groupId
+        }
+        console.log("-----------------",groupId)
+        let result = query(collectionRef,where('groupId', '==', groupId), where('CapturedDate', '>=', startDate), where('CapturedDate', '<=', endDate));
         getDocs(result).then((querySnapshot) => {
             setIsloader(false);
             let selectedGroupListcopy = [];
@@ -178,9 +178,6 @@ export default function ExpensiveDashboard({ route, navigation }) {
         setIsMonthView(!status);
     }
     return (
-        <>
-
-
             <View style={styles.container}>
                 {isLoader && 
                 <LoadingSpinner/>}
@@ -189,7 +186,7 @@ export default function ExpensiveDashboard({ route, navigation }) {
                     {isMonthView && <View style={styles.monthView}>
                         <View style={styles.monthItems}>
                             <Dropdown
-                                style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
+                                style={[styles.dropdown, isFocus && { borderColor: globalConstants.appThemeColor}]}
                                 placeholderStyle={styles.placeholderStyle}
                                 selectedTextStyle={styles.selectedTextStyle}
                                 inputSearchStyle={styles.inputSearchStyle}
@@ -247,24 +244,22 @@ export default function ExpensiveDashboard({ route, navigation }) {
                     <View>
                         <Pressable
                             onPress={() => changeDayMonthView()}>
-                            <AntDesign name="addusergroup" size={32} color="black" />
+                            <MaterialCommunityIcons name="home-switch-outline" size={45} color={globalConstants.appThemeColor} style={{marginLeft:10}}/>
                         </Pressable>
                     </View>
                 </View>
+                
                 <View style={styles.outer1}>
-                    <View style={styles.amountField}>
-                        <Text style={styles.amountText}>{spentAmount}</Text>
-                    </View>
                     <ScrollView contentContainerStyle={styles.outer}>
                         {expensiveDataList.map((expensiveRecord, index) => {
                             return (
                                 //<TouchableOpacity  key={group.userId}  onPress={() => navigation.navigate('ExpensiveList')}>
-                                <View key={Math.random().toString()} style={[styles.inner, styles.groupContainer]}>
+                                <View key={Math.random().toString()} style={[ styles.groupContainer]}>
                                     <TouchableOpacity onPress={() => navigation.navigate('ExpensiveList', { selectedGroup: group })}>
                                         <View>
                                             <Text style={styles.groupName} >{expensiveRecord.Description}</Text>
                                         </View>
-                                        <View style={{ flexDirection: 'row', paddingTop: 10 }}>
+                                        <View style={{ flexDirection: 'row', paddingTop: 4}}>
                                             <Text style={[styles.groupName, { width: '20%' }]} >{expensiveRecord.Amount}</Text>
                                             <Text style={[styles.groupName, { width: '60%' }]} >{expensiveRecord.formatDate.toLocaleString()}</Text>
                                             <Text style={[styles.groupName, { width: '20%' }]} >{expensiveRecord.CapturedBy}</Text>
@@ -276,15 +271,22 @@ export default function ExpensiveDashboard({ route, navigation }) {
                         })}
                     </ScrollView>
                 </View>
-
-                <Pressable
-                    onPress={() => navigation.navigate('Add-Expensive')}>
-                    <AntDesign name="addusergroup" size={32} color="black" style={{ position: "absolute", bottom: 20, right: 20 }} />
-                </Pressable>
-
+                <View style={[{flexDirection: 'row'}]}>
+                        <View style={[styles.amountField1, styles.elevation]}>
+                            <Text style={styles.amountText1}>{spentAmount}</Text>
+                        </View>
+                        <View style={[styles.amountField2, styles.elevation]}>
+                            <Text style={styles.amountText2}>{spentAmount}</Text>
+                        </View>
+                        <View style={[styles.amountField3, styles.elevation]}>
+                            <Text style={styles.amountText3}>{spentAmount}</Text>
+                        </View>
+                        <Pressable onPress={() => navigation.navigate('Add-Expensive')}>
+                            <AntDesign name="addusergroup" size={32} color="black" style={styles.AddExpenses} />
+                        </Pressable>
+                    </View>
 
             </View>
-        </>
     )
 
 }
@@ -298,20 +300,58 @@ const styles = StyleSheet.create({
         bottom: 0,
         justifyContent: 'center',
     },
-    amountField:{
-       width:'20%',
-       //height:'10%',
+      elevation: {
+        elevation: 10,
+        shadowColor: 'black',
+      },
+    amountField1:{
+       backgroundColor: '#F94931',
+       width:'25%',
+       justifyContent: 'center',
+       height:50,
        borderRadius:10,
-       borderWidth:3,
-       borderColor:globalConstants.appThemeColor,
-       backgroundColor:'red' ,
+       borderWidth:2,
+       borderColor:'#F94931',
+       marginLeft:10,
        margin:5
     },
-    amountText:{
+    amountText1:{
         color:'white',
         fontSize:20,
         textAlign:'center'
     },
+    amountField2:{
+        backgroundColor: '#26CF16',
+        width:'25%',
+        justifyContent: 'center',
+        height:50,
+        borderRadius:10,
+        borderWidth:2,
+        borderColor:'#26CF16',
+        marginLeft:2,
+        margin:5
+     },
+     amountText2:{
+         color:'white',
+         fontSize:20,
+         textAlign:'center'
+     },
+     amountField3:{
+        backgroundColor: '#c2c0c0',
+        width:'25%',
+        justifyContent: 'center',
+        height:50,
+        borderRadius:10,
+        borderWidth:2,
+        borderColor:'#c2c0c0',
+        marginLeft:2,
+        margin:5
+     },
+     amountText3:{
+         color:'white',
+         fontSize:20,
+         textAlign:'center'
+     },
     outer: {
         //   flex: 1,
         height: '100%',
@@ -340,16 +380,14 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     monthView: {
-        width: '90%'
-        // flex: 1,
-        //flexDirection: 'row',
-        // flexWrap: 'wrap',
-        //alignItems: 'flex-start'
+        width: '80%',
+        borderColor:globalConstants.appThemeColor,
     },
     monthItems: {
         //width: '50%' 
     },
     input: {
+        backgroundColor:'white',
         height: 40,
         width: '100%',
         margin: 12,
@@ -357,17 +395,18 @@ const styles = StyleSheet.create({
         padding: 10,
     },
     inputView: {
-        backgroundColor: "#90EE90",
+        backgroundColor: "white",
         borderRadius: 10,
-        width: "95%",
-        height: 60,
+        width: "100%",
+        height: 50,
+        borderColor:'#cdcdcd',
         marginBottom: 10,
-        alignItems: "center",
-        marginLeft: 10
+        alignItems: "center"
     },
     dropdown: {
         height: 50,
         borderColor: 'gray',
+        backgroundColor: "white",
         borderWidth: 0.5,
         borderRadius: 8,
         paddingHorizontal: 8,
@@ -377,7 +416,6 @@ const styles = StyleSheet.create({
     },
     label: {
         position: 'absolute',
-        backgroundColor: 'white',
         left: 22,
         top: 8,
         zIndex: 999,
@@ -399,16 +437,29 @@ const styles = StyleSheet.create({
         fontSize: 16,
     },
     groupContainer: {
-        // height: '0%',
+        height: '8%',
         width: '95%',
-        borderWidth: 2,
-        borderColor: globalConstants.appThemeColor,
-        margin: 10,
-        borderRadius: 15,
-        padding: 10
+        borderWidth: 1,
+        backgroundColor:'#E9E9E9',
+        borderColor: globalConstants.appThemeColor,//'#D3AEFB',
+        marginTop:7,
+        marginLeft:10,
+        borderRadius: 4,
+        padding: 5
     },
     groupName: {
-        fontSize: 15,
-        fontWeight: '700'
+        fontSize: 12,
+        fontWeight: '800',
+        color:globalConstants.appThemeColor
+    },
+    AddExpenses:{ 
+        backgroundColor:globalConstants.appThemeColor,
+        marginLeft:20,
+        marginTop:25,
+        color:'white',
+        padding:8,
+        borderRadius:8,
+        bottom: 20, 
+        right: 20 
     }
 });

@@ -3,6 +3,8 @@ import { StyleSheet, Text, View, Button, Alert, FlatList, TextInput, TouchableOp
 import { useEffect, useState } from 'react';
 import { getFirestore, collection, addDoc, query, where, getDocs } from "firebase/firestore";
 import { firebase, app } from '../FireBaseConfig';
+import globalConstants from '../Consants/AppContstants';
+
 
 
 export default function AddNewGroup({ navigation }) {
@@ -69,6 +71,7 @@ const styles = StyleSheet.create({
         height: 40,
         width: '100%',
         margin: 12,
+        backgroundColor:'white',
         borderWidth: 0,
         padding: 10,
     },
@@ -80,10 +83,10 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         marginTop: 40,
-        backgroundColor: "#6B8E23",
+        backgroundColor: globalConstants.appThemeColor,
     },
     inputView: {
-        backgroundColor: "#90EE90",
+        backgroundColor: "white",
         borderRadius: 10,
         width: "80%",
         height: 60,

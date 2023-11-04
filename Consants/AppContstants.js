@@ -1,3 +1,3 @@
 export default globalConstants ={
-    appThemeColor:'#7FFFD4'
+    appThemeColor:'#764abc'
 }

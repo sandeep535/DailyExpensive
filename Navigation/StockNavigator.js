@@ -33,9 +33,7 @@ const MainStackNavigator = () => {
 
     }>
       <Stack.Screen
-        options={{
-          title: 'Login'
-        }}
+        options={{ headerShown: false }}
         name="Login"
         component={Login} />
 
@@ -68,7 +66,7 @@ const MainStackNavigator = () => {
         component={DrawerNavigator}
         options={{ headerShown: false }}
       />
-      <Stack.Screen name="Signup" component={Signup} />
+      <Stack.Screen name="Signup" options={{ headerShown: false }} component={Signup} />
     </Stack.Navigator>
   );
 }

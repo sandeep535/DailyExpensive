@@ -15,7 +15,7 @@ const DrawerNavigator = () => {
     <Drawer.Navigator screenOptions={
       {
         drawerStyle: {
-          backgroundColor: '#c6cbef',
+          backgroundColor: 'white',
           width: 240,
         },
         headerStyle: {

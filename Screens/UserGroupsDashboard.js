@@ -86,7 +86,6 @@ export default function UserGroupsDashboard({ navigation }) {
 
     return (
         <View style={styles.container}>
-            <Notification/>
             {isLoading &&
             <LoadingSpinner/>}
             <ScrollView contentContainerStyle={styles.outer}>
@@ -121,16 +120,17 @@ const styles = StyleSheet.create({
         height: '100%'
     },
     groupContainer: {
-        height: '20%',
+        height: 60,
         width: '95%',
         borderWidth: 2,
         borderColor: globalConstants.appThemeColor,
         margin:10,
-        borderRadius:15,
-        padding:10
+        borderRadius:10,
+        padding:13
     },
     groupName:{
         fontSize:20,
-        fontWeight:'700'
+        fontWeight:'700',
+        color:globalConstants.appThemeColor
     }
 });

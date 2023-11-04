@@ -1,17 +1,14 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Button, Alert, TextInput, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, ToastAndroid, TextInput, TouchableOpacity } from 'react-native';
 import { useEffect, useState } from 'react';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import Ionicons from '@expo/vector-icons/Ionicons';
-import { AntDesign } from '@expo/vector-icons';
-import { Entypo } from '@expo/vector-icons';
-import { useForm } from 'react-hook-form';
 import { firebase, app } from '../FireBaseConfig';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../FireBaseConfig';
-import { getFirestore, collection, addDoc, query, where, getDocs } from "firebase/firestore";
+import { getFirestore, collection, query, where, getDocs } from "firebase/firestore";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import globalConstants from '../Consants/AppContstants';
+import AppLogo  from '../Components/AppLogo';
+
 
 export default function Login({ navigation }) {
     const user = firebase.firestore().collection('Users');
@@ -28,25 +25,27 @@ export default function Login({ navigation }) {
         }
     };
     async function callAddAPI() {
-       // let userData = await _retrieveLoginData();
-        //if (userData) {
-        //  userData = JSON.parse(userData);
-        // navigation.navigate('Home');
-        //}else{
+       if(!email){
+        ToastAndroid.show("Please Enter Email",ToastAndroid.SHORT);
+        return false;
+       }
+       if(!password){
+        ToastAndroid.show("Please Password",ToastAndroid.SHORT);
+        return false;
+       }
         signInWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
+                console.log(userCredential);
                 // Signed in
                 const user = userCredential.user;
                 getUserData(user.email);
-
-                //  console.log('---->',user);
             })
             .catch((error) => {
                 const errorCode = error.code;
                 const errorMessage = error.message;
-                console.log(errorCode, errorMessage)
+                ToastAndroid.show("Invalid Username or Password !",ToastAndroid.SHORT);
+                console.log("cache error-->",errorCode, errorMessage)
             });
-        // }
 
 
     }
@@ -79,6 +78,8 @@ export default function Login({ navigation }) {
     }, [])
     return (
         <View style={styles.container}>
+            <AppLogo />
+            <View style={styles.childContainer}>
             <View style={styles.inputView}>
                 <TextInput
                     style={styles.input}
@@ -112,6 +113,7 @@ export default function Login({ navigation }) {
             }}>
                 <Text style={styles.loginText}>Signup</Text>
             </TouchableOpacity>
+            </View>
             <StatusBar style="auto" />
         </View>
     );
@@ -123,28 +125,63 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
+    childContainer:{
+        width:350,
+        height:300,
+        borderWidth:2,
+        borderColor:'#DCDADA',
+        alignItems: 'center',
+        borderRadius:8,
+        justifyContent: 'center'
+    },
+
+    logo:{
+        width:70,
+        height:70,
+    },
+    headerText:{
+        fontSize:30,
+        fontWeight:'800',
+        marginBottom:30,
+        marginTop:10,
+        color:globalConstants.appThemeColor,    
+    },
     input: {
         height: 40,
-        width: '100%',
-        margin: 12,
+        width: 300,
+        margin: 10,
         borderWidth: 0,
         padding: 10,
-        fontSize:20
+        fontSize:16
     },
     loginBtn:
     {
-        width: "80%",
+        width: 320,
         borderRadius: 25,
         height: 50,
         alignItems: "center",
         justifyContent: "center",
-        marginTop: 40,
+        marginTop: 10,
+        backgroundColor: globalConstants.appThemeColor,
+    },
+    loginText:{
+        color:'white',
+        fontSize:16,
+    },
+    signupBtn:
+    {
+        width: 320,
+        borderRadius: 25,
+        height: 50,
+        alignItems: "center",
+        justifyContent: "center",
+        marginTop: 10,
         backgroundColor: globalConstants.appThemeColor,
     },
     inputView: {
-        backgroundColor: globalConstants.appThemeColor,
+        backgroundColor: 'white',
         borderRadius: 10,
-        width: "80%",
+        width: 320,
         height: 60,
         marginBottom: 10,
         alignItems: "center",
@@ -155,5 +192,5 @@ const styles = StyleSheet.create({
         padding: 10,
         marginLeft: 20,
         fontSize:18
-    }
+    },
 });

@@ -48,7 +48,7 @@ export default function GroupMasterList({ navigation }) {
             />
             <Pressable
                 onPress={() => navigation.navigate('add-group')}>
-               <AntDesign name="addusergroup" size={32} color="black" style={{ position: "absolute", bottom: 20, right: 20 }} />
+               <AntDesign name="addusergroup" size={32} style={styles.AddExpenses} />
             </Pressable>
             
         </View>
@@ -101,7 +101,17 @@ const styles = StyleSheet.create({
         shadowRadius: 4,
         elevation: 5,
       },
-      
+      AddExpenses:{ 
+        backgroundColor:globalConstants.appThemeColor,
+        marginLeft:'90%',
+        width:50,
+        marginTop:25,
+        color:'white',
+        padding:8,
+        borderRadius:8,
+        bottom: 20, 
+        right: 20 
+    },
      
       buttonClose: {
         backgroundColor: '#2196F3',
