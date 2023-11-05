@@ -12,6 +12,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import AppContext from '../Context/appContext';
 import globalConstants from '../Consants/AppContstants';
 import { RadioButton } from 'react-native-paper';
+import LoadingSpinner from '../Components/LoadingSpinner';
 
 export default function HomeScreen({ navigation }) {
     const { handleSubmit, register, setValue, errors } = useForm();

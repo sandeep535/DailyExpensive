@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react'
 import { StyleSheet, View, ActivityIndicator, Animated, Easing } from 'react-native'
+import globalConstants from '../Consants/AppContstants';
 
 const LoadingSpinner = ({
   color,
@@ -12,7 +13,7 @@ const LoadingSpinner = ({
 
   return (
     <View style={{ position: "absolute", top: '50%', left: '50%' }}>
-      <ActivityIndicator size="large" number = '100' color="#00ff00"  style = {styles.activityIndicator}/>
+      <ActivityIndicator size="large" number = '100' color={globalConstants.appThemeColor}  style = {styles.activityIndicator}/>
     </View>
   )
 }

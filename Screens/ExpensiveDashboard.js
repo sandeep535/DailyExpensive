@@ -21,6 +21,7 @@ export default function ExpensiveDashboard({ route, navigation }) {
     const [expensiveDataList, setExpensiveDataList] = useState([])
     const [isLoader,setIsloader] = useState(false);
     const [spentAmount,seSpentAmount] = useState(0);
+    const [topupAmount,seTopupAmount] =useState(0);
     const appContextValue = useContext(AppContext);
     
 
@@ -112,7 +113,7 @@ export default function ExpensiveDashboard({ route, navigation }) {
             formatStartDate = ""+getFullYear+"-"+item.startDate;
             formatEndDate = ""+getFullYear+"-"+item.endDate;
         }else{
-            var getCurrentMonth = new Date().getMonth();
+            var getCurrentMonth = new Date().getMonth()+1;
             var getFullYear = new Date().getFullYear();
             var filterData = months.filter(item => item.id==getCurrentMonth);
             if(filterData && filterData.length !=0){
@@ -127,21 +128,26 @@ export default function ExpensiveDashboard({ route, navigation }) {
         if(groupId){
             groupId = groupId.groupId
         }
-        console.log("-----------------",groupId)
         let result = query(collectionRef,where('groupId', '==', groupId), where('CapturedDate', '>=', startDate), where('CapturedDate', '<=', endDate));
         getDocs(result).then((querySnapshot) => {
             setIsloader(false);
             let selectedGroupListcopy = [];
             let spentAmount = 0;
+            let topupAmount =0;
             querySnapshot.forEach((doc) => {
                 var obj = {
                     formatDate: doc.data().CapturedDate.toDate()
                 }
-                spentAmount = spentAmount + Number(doc.data().Amount);
+                if(doc.data().isTopupAmount == "1"){
+                    topupAmount = topupAmount + Number(doc.data().Amount);
+                }else{
+                    spentAmount = spentAmount + Number(doc.data().Amount);
+                }
                 obj = { ...obj, ...doc.data() }
                 selectedGroupListcopy.push(obj);
             });
             seSpentAmount(spentAmount);
+            seTopupAmount(topupAmount);
             setExpensiveDataList(selectedGroupListcopy);
         })
     }
@@ -273,13 +279,13 @@ export default function ExpensiveDashboard({ route, navigation }) {
                 </View>
                 <View style={[{flexDirection: 'row'}]}>
                         <View style={[styles.amountField1, styles.elevation]}>
-                            <Text style={styles.amountText1}>{spentAmount}</Text>
+                            <Text style={styles.amountText1}>{topupAmount}</Text>
                         </View>
                         <View style={[styles.amountField2, styles.elevation]}>
                             <Text style={styles.amountText2}>{spentAmount}</Text>
                         </View>
                         <View style={[styles.amountField3, styles.elevation]}>
-                            <Text style={styles.amountText3}>{spentAmount}</Text>
+                            <Text style={styles.amountText3}>{topupAmount - spentAmount}</Text>
                         </View>
                         <Pressable onPress={() => navigation.navigate('Add-Expensive')}>
                             <AntDesign name="addusergroup" size={32} color="black" style={styles.AddExpenses} />
