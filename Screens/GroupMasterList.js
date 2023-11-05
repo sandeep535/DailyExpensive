@@ -22,7 +22,6 @@ export default function GroupMasterList({ navigation }) {
             setIsLoader(false);
             const postData = [];
             snapshot.forEach((doc) => postData.push({ ...doc.data(), id: doc.id }));
-            console.log(postData);
             setGroupName(postData);
         });
     }, [])

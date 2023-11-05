@@ -63,7 +63,7 @@ export default function HomeScreen({ navigation }) {
             CapturedBy: userData.UserName,
             CapturedById: userData.UserId,
             isTopupAmount : amountType,
-            recordId:"ex" + new Date().valueOf(),
+            recordId:"ex"+new Date().valueOf(),
             groupId: (appContextValue && appContextValue.selectedGroupData) ? appContextValue && appContextValue.selectedGroupData.groupId : ''
         }).then((res) => {
             setIsloader(false);
@@ -73,20 +73,17 @@ export default function HomeScreen({ navigation }) {
             .catch((err) => {
                 setIsloader(false);
                 ToastAndroid.show("Plase try again",ToastAndroid.SHORT);
-                console.error("Error found: ", err);
 
             });
     }
     async function getLoggedinData() {
         let userDataCopy = await retrieveLoginData();
         userDataCopy = JSON.parse(userDataCopy);
-        console.log("Sandeep-----------", userDataCopy)
         setUserData(userDataCopy);
     }
     async function retrieveLoginData() {
         try {
             const value = await AsyncStorage.getItem('loggedinUserData');
-            console.log("ssssddddddddddd", value)
             if (value !== null) {
                 return value;
             }
@@ -103,7 +100,6 @@ export default function HomeScreen({ navigation }) {
                 <LoadingSpinner/>}
             <RadioButton.Group
                 onValueChange={value => {
-                    console.log("sss", value)
                     setAmountType(value)
                 }}
                 value={amountType}
@@ -185,7 +181,7 @@ const styles = StyleSheet.create({
         //justifyContent: 'center',
     },
     input: {
-        height:'60%',
+      //  height:'60%',
         width: '100%',
         margin: 14,
         borderWidth: 0,
@@ -195,7 +191,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         borderRadius: 10,
         width: "95%",
-        height: '10%',
+       // height: '10%',
         marginBottom: 10,
         alignItems: "center",
         marginLeft: 10
@@ -214,7 +210,7 @@ const styles = StyleSheet.create({
         color: 'white'
     },
     TextInput: {
-        height: '20%',
+       // height: '20%',
         flex: 1,
         padding: 10,
         color: 'black',

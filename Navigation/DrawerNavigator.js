@@ -7,6 +7,7 @@ import UserGroupsDashboard from '../Screens/UserGroupsDashboard';
 import ExpensiveDashboard from '../Screens/ExpensiveDashboard';
 import GroupMasterList from '../Screens/GroupMasterList';
 import globalConstants from '../Consants/AppContstants';
+import LogoutComponent from '../Screens/LogoutComponent';
 
 const Drawer = createDrawerNavigator();
 
@@ -19,7 +20,7 @@ const DrawerNavigator = () => {
           width: 240,
         },
         headerStyle: {
-          backgroundColor:globalConstants.appThemeColor,
+          backgroundColor: globalConstants.appThemeColor,
         },
         headerTintColor: '#fff',
       }
@@ -28,7 +29,7 @@ const DrawerNavigator = () => {
       {/* <Drawer.Screen name="HomePage" component={HomeScreen}  /> */}
       <Drawer.Screen
         options={{
-          title:'User Dashboard'
+          title: 'User Dashboard'
         }}
         name="HomePage"
         component={UserGroupsDashboard} />
@@ -37,6 +38,11 @@ const DrawerNavigator = () => {
       }}
         name="group"
         component={GroupMasterList} />
+      <Drawer.Screen options={{
+        title: 'Logout'
+      }}
+        name="Logout"
+        component={LogoutComponent} />
       {/* <Drawer.Screen name="ExpensiveList" component={ExpensiveDashboard}  />
       <Drawer.Screen name="Add-Expensive" component={HomeScreen}  />
       <Drawer.Screen name="GroupMaster" component={GroupMasterAdd} /> */}

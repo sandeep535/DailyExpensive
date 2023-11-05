@@ -18,7 +18,6 @@ export default function UserGroupsDashboard({ navigation }) {
     const [selectedUserGroupList, setSelectedUserGroupList] = useState([]);
     const [isLoading,setIsLoading] = useState(false);
     const value = useContext(AppContext);
-    console.log("sssssssssssssdddddddddddddddddd",value);
     useEffect(() => {
         getAllGroupsData();
         getSelectedGroup();
@@ -53,7 +52,6 @@ export default function UserGroupsDashboard({ navigation }) {
                 }
 
             });
-            console.log("-------->", postData);
             setSelectedUserGroupList(postData);
 
         });
@@ -66,7 +64,6 @@ export default function UserGroupsDashboard({ navigation }) {
         if (userData) {
             userData = JSON.parse(userData);
         }
-        //console.log("ssssssssssssssssssssssss",userData);
         let result = query(collectionRef, where('userId', '==', userData.UserId));
         getDocs(result).then((querySnapshot) => {
             setIsLoading(false);

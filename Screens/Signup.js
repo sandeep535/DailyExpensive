@@ -48,12 +48,10 @@ export default function Signup({ navigation }) {
             return false;
         }
        
-        console.log("sign")
         createUserWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
                 // Signed in
                 const user = userCredential.user;
-                console.log(user);
                 saveUserTpapp(user)
                 //navigate("/login")
                 // ...

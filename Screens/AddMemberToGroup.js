@@ -88,9 +88,7 @@ function AddMemberToGroup({ route, navigation }) {
                             setAutoQuery(text);
                             let filterData = [];
                             if (text) {
-                                
                                 filterData = usersDataList.filter(item => {
-                                    console.log("`-------------",item)
                                     return item.UserName.toLowerCase().startsWith(text.toLowerCase());
                                 });
                             }

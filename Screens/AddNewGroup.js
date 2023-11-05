@@ -20,7 +20,6 @@ export default function AddNewGroup({ navigation }) {
             var isTrue = false;
             querySnapshot.forEach((doc) => {
                 isTrue = true;
-                console.log(doc.id, " => ", doc.data());
             });
             if (!isTrue) {
                 createGroups();
@@ -33,7 +32,6 @@ export default function AddNewGroup({ navigation }) {
             groupName: groupName,
             status: "1"
         }).then((res) => {
-            console.log(res);
             navigation.goBack();
         })
             .catch((err) => {

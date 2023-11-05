@@ -35,7 +35,6 @@ export default function Login({ navigation }) {
        }
         signInWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
-                console.log(userCredential);
                 // Signed in
                 const user = userCredential.user;
                 getUserData(user.email);
@@ -56,7 +55,6 @@ export default function Login({ navigation }) {
         getDocs(result).then((querySnapshot) => {
             let selecedGroupData = [];
             querySnapshot.forEach((doc) => {
-                console.log(doc.data());
                 AsyncStorage.setItem(
                     'loggedinUserData',
                     JSON.stringify(doc.data()),
