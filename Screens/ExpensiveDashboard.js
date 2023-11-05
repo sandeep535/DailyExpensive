@@ -2,13 +2,14 @@ import { StyleSheet, Text, View, TextInput,Dimensions, ScrollView, Pressable, To
 import { useEffect, useState, useContext } from 'react';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { AntDesign,Entypo,MaterialCommunityIcons } from '@expo/vector-icons';
-import {  app } from '../FireBaseConfig';
 import { getFirestore, collection, query, where, getDocs } from "firebase/firestore";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Dropdown } from 'react-native-element-dropdown';
 import LoadingSpinner from '../Components/LoadingSpinner';
 import AppContext from '../Context/appContext';
 import globalConstants from '../Consants/AppContstants';
+import { firebase, app } from '../FireBaseConfig';
+import { doc, deleteDoc } from "firebase/firestore";
 
 const ScreenWidth = Dimensions.get('window').width;
 
@@ -23,11 +24,11 @@ export default function ExpensiveDashboard({ route, navigation }) {
     const [spentAmount,seSpentAmount] = useState(0);
     const [topupAmount,seTopupAmount] =useState(0);
     const appContextValue = useContext(AppContext);
-    
 
     const [month, setMonth] = useState(null);
     const [isFocus, setIsFocus] = useState(false);
 
+    const ExpensiveDataDb = firebase.firestore().collection('ExpensiveData');
     const months = [{
         id: '1',
         value: 'Jan',
@@ -138,7 +139,7 @@ export default function ExpensiveDashboard({ route, navigation }) {
                 var obj = {
                     formatDate: doc.data().CapturedDate.toDate()
                 }
-                if(doc.data().isTopupAmount == "1"){
+                if(doc.data().isTopupAmount && doc.data().isTopupAmount == "2"){
                     topupAmount = topupAmount + Number(doc.data().Amount);
                 }else{
                     spentAmount = spentAmount + Number(doc.data().Amount);
@@ -182,6 +183,11 @@ export default function ExpensiveDashboard({ route, navigation }) {
     function changeDayMonthView() {
         let status = isMonthView;
         setIsMonthView(!status);
+    }
+    async function deleteExpense(item){
+        console.log(item);
+        await deleteDoc(doc(ExpensiveDataDb, "recordId", item.recordId));
+        console.log("sssssddddffffs");
     }
     return (
             <View style={styles.container}>
@@ -264,6 +270,9 @@ export default function ExpensiveDashboard({ route, navigation }) {
                                     <TouchableOpacity onPress={() => navigation.navigate('ExpensiveList', { selectedGroup: group })}>
                                         <View>
                                             <Text style={styles.groupName} >{expensiveRecord.Description}</Text>
+                                            <Pressable onPress={() => {alert("ddd");deleteExpense(expensiveRecord)}}>
+                                                <Entypo style={styles.Delete} name="cross" size={25}/>
+                                            </Pressable>
                                         </View>
                                         <View style={{ flexDirection: 'row', paddingTop: 4}}>
                                             <Text style={[styles.groupName, { width: '20%' }]} >{expensiveRecord.Amount}</Text>
@@ -278,14 +287,14 @@ export default function ExpensiveDashboard({ route, navigation }) {
                     </ScrollView>
                 </View>
                 <View style={[{flexDirection: 'row'}]}>
-                        <View style={[styles.amountField1, styles.elevation]}>
-                            <Text style={styles.amountText1}>{topupAmount}</Text>
+                        <View style={[styles.amountField3]}>
+                            <Text style={styles.amountText3}>{topupAmount}</Text>
                         </View>
-                        <View style={[styles.amountField2, styles.elevation]}>
-                            <Text style={styles.amountText2}>{spentAmount}</Text>
+                        <View style={[styles.amountField1]}>
+                            <Text style={styles.amountText1}>{spentAmount}</Text>
                         </View>
-                        <View style={[styles.amountField3, styles.elevation]}>
-                            <Text style={styles.amountText3}>{topupAmount - spentAmount}</Text>
+                        <View style={[styles.amountField2]}>
+                            <Text style={styles.amountText2}>{topupAmount - spentAmount}</Text>
                         </View>
                         <Pressable onPress={() => navigation.navigate('Add-Expensive')}>
                             <AntDesign name="addusergroup" size={32} color="black" style={styles.AddExpenses} />
@@ -306,10 +315,11 @@ const styles = StyleSheet.create({
         bottom: 0,
         justifyContent: 'center',
     },
-      elevation: {
-        elevation: 10,
-        shadowColor: 'black',
-      },
+    Delete:{
+        color:'red',
+        marginLeft:335,
+        marginTop:-10
+    },
     amountField1:{
        backgroundColor: '#F94931',
        width:'25%',
@@ -318,7 +328,7 @@ const styles = StyleSheet.create({
        borderRadius:10,
        borderWidth:2,
        borderColor:'#F94931',
-       marginLeft:10,
+       marginLeft:2,
        margin:5
     },
     amountText1:{
@@ -350,7 +360,7 @@ const styles = StyleSheet.create({
         borderRadius:10,
         borderWidth:2,
         borderColor:'#c2c0c0',
-        marginLeft:2,
+        marginLeft:10,
         margin:5
      },
      amountText3:{
@@ -443,10 +453,10 @@ const styles = StyleSheet.create({
         fontSize: 16,
     },
     groupContainer: {
-        height: '8%',
+        height: '10%',
         width: '95%',
         borderWidth: 1,
-        backgroundColor:'#E9E9E9',
+        backgroundColor:'#ffffff',
         borderColor: globalConstants.appThemeColor,//'#D3AEFB',
         marginTop:7,
         marginLeft:10,

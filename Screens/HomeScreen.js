@@ -63,6 +63,7 @@ export default function HomeScreen({ navigation }) {
             CapturedBy: userData.UserName,
             CapturedById: userData.UserId,
             isTopupAmount : amountType,
+            recordId:"ex" + new Date().valueOf(),
             groupId: (appContextValue && appContextValue.selectedGroupData) ? appContextValue && appContextValue.selectedGroupData.groupId : ''
         }).then((res) => {
             setIsloader(false);
@@ -184,7 +185,7 @@ const styles = StyleSheet.create({
         //justifyContent: 'center',
     },
     input: {
-        height: 40,
+        height:'60%',
         width: '100%',
         margin: 14,
         borderWidth: 0,
@@ -194,7 +195,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         borderRadius: 10,
         width: "95%",
-        height: 60,
+        height: '10%',
         marginBottom: 10,
         alignItems: "center",
         marginLeft: 10
@@ -202,7 +203,7 @@ const styles = StyleSheet.create({
     loginBtn:
     {
         borderRadius: 25,
-        height: 50,
+        height: '8%',
         alignItems: "center",
         justifyContent: "center",
         margin: 20,
@@ -213,9 +214,10 @@ const styles = StyleSheet.create({
         color: 'white'
     },
     TextInput: {
-        height: 50,
+        height: '20%',
         flex: 1,
         padding: 10,
+        color: 'black',
         marginLeft: 20,
     }
 });
