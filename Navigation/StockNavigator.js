@@ -24,7 +24,6 @@ const MainStackNavigator = () => {
         headerShown: true,
         drawerStyle: {
           backgroundColor: '#c6cbef',
-          width: 240,
         }, headerStyle: {
           backgroundColor: globalConstants.appThemeColor,
         },
@@ -60,7 +59,11 @@ const MainStackNavigator = () => {
           title: 'Add Expensive'
         }}
         name="Add-Expensive" component={HomeScreen} />
-      <Stack.Screen name="GroupMaster" component={GroupMasterAdd} />
+      <Stack.Screen 
+       options={{
+        title: 'Group Master'
+      }}
+       name="GroupMaster" component={GroupMasterAdd} />
       <Stack.Screen
         name="Home"
         component={DrawerNavigator}

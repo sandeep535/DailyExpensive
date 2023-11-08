@@ -8,12 +8,13 @@ import { getFirestore, collection, query, where, getDocs } from "firebase/firest
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import globalConstants from '../Consants/AppContstants';
 import AppLogo  from '../Components/AppLogo';
-
+import LoadingSpinner from '../Components/LoadingSpinner';
 
 export default function Login({ navigation }) {
     const user = firebase.firestore().collection('Users');
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [isLoader, setIsloader] = useState(false);
     _retrieveLoginData = async () => {
         try {
             const value = await AsyncStorage.getItem('loggedinUserData');
@@ -25,6 +26,7 @@ export default function Login({ navigation }) {
         }
     };
     async function callAddAPI() {
+       
        if(!email){
         ToastAndroid.show("Please Enter Email",ToastAndroid.SHORT);
         return false;
@@ -33,6 +35,7 @@ export default function Login({ navigation }) {
         ToastAndroid.show("Please Password",ToastAndroid.SHORT);
         return false;
        }
+       setIsloader(true);
         signInWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
                 // Signed in
@@ -40,6 +43,7 @@ export default function Login({ navigation }) {
                 getUserData(user.email);
             })
             .catch((error) => {
+                setIsloader(false);
                 const errorCode = error.code;
                 const errorMessage = error.message;
                 ToastAndroid.show("Invalid Username or Password !",ToastAndroid.SHORT);
@@ -53,6 +57,7 @@ export default function Login({ navigation }) {
         const collectionRef = collection(fs, 'Users');
         let result = query(collectionRef, where('email', '==', email));
         getDocs(result).then((querySnapshot) => {
+            setIsloader(false);
             let selecedGroupData = [];
             querySnapshot.forEach((doc) => {
                 AsyncStorage.setItem(
@@ -60,7 +65,8 @@ export default function Login({ navigation }) {
                     JSON.stringify(doc.data()),
                 );
             });
-            navigation.navigate('Home')
+          
+            navigation.navigate('Home');
             // setAddedUserList(selecedGroupData);
         })
     }
@@ -76,6 +82,8 @@ export default function Login({ navigation }) {
     }, [])
     return (
         <View style={styles.container}>
+             {isLoader &&
+                <LoadingSpinner />}
             <AppLogo />
             <View style={styles.childContainer}>
             <View style={styles.inputView}>

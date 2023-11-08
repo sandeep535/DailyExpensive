@@ -47,6 +47,8 @@ export default function HomeScreen({ navigation }) {
         showMode('time');
     };
     function callAddExpensiveAPI() {
+        
+       // navigation.goBack();
         if (!description) {
             ToastAndroid.show("Please Enter Description", ToastAndroid.SHORT);
             return false;
@@ -68,6 +70,8 @@ export default function HomeScreen({ navigation }) {
         }).then((res) => {
             setIsloader(false);
             ToastAndroid.show("Amount Added",ToastAndroid.SHORT);
+            appContextValue.setIsUpdateEvent(Math.random().toString());
+           // navigation.navigate('ExpensiveList',{selectedGroup:appContextValue.selectedGroupData})
             navigation.goBack();
         })
             .catch((err) => {

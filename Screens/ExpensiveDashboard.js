@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TextInput, Dimensions, ScrollView, Pressable, TouchableOpacity, ToastAndroid } from 'react-native';
+import { StyleSheet, Text, View, TextInput, Dimensions, FlatList,ScrollView, Pressable, TouchableOpacity, ToastAndroid } from 'react-native';
 import { useEffect, useState, useContext } from 'react';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { AntDesign, Entypo, MaterialCommunityIcons } from '@expo/vector-icons';
@@ -9,9 +9,6 @@ import LoadingSpinner from '../Components/LoadingSpinner';
 import AppContext from '../Context/appContext';
 import globalConstants from '../Consants/AppContstants';
 import { firebase, app } from '../FireBaseConfig';
-import { doc, deleteDoc } from "firebase/firestore";
-
-const ScreenWidth = Dimensions.get('window').width;
 
 export default function ExpensiveDashboard({ route, navigation }) {
     const { selectedGroup } = route.params;
@@ -23,10 +20,11 @@ export default function ExpensiveDashboard({ route, navigation }) {
     const [isLoader, setIsloader] = useState(false);
     const [spentAmount, seSpentAmount] = useState(0);
     const [topupAmount, seTopupAmount] = useState(0);
-    const appContextValue = useContext(AppContext);
+    const {isUpdate,setIsUpdate} = useContext(AppContext);
+    const  appContextValue =useContext(AppContext);
     const [month, setMonth] = useState(null);
     const [isFocus, setIsFocus] = useState(false);
-
+    //console.log("main page Expensive ----------------",date,show,mode,isFocus,month,topupAmount,spentAmount,isLoader)
     const ExpensiveDataDb = firebase.firestore().collection('ExpensiveData');
     const months = [{
         id: '1',
@@ -91,13 +89,16 @@ export default function ExpensiveDashboard({ route, navigation }) {
         startDate: '12-01',
         endDate: '12-31'
     }];
-
     useEffect(() => {
         setIsloader(true);
-        getExpensiveData();
+        setTimeout(function(){
+            getExpensiveData();
+        },1000)
+       
     }, []);
 
     async function getExpensiveData(item) {
+       // console.log("--------called111");
         const fs = getFirestore(app);
         const collectionRef = collection(fs, 'ExpensiveData');
         let userData = await _retrieveLoginData();
@@ -127,8 +128,10 @@ export default function ExpensiveDashboard({ route, navigation }) {
         if (groupId) {
             groupId = groupId.groupId
         }
+       // console.log("--------called2222222222",groupId);
         let result = query(collectionRef, where('groupId', '==', groupId), where('CapturedDate', '>=', startDate), where('CapturedDate', '<=', endDate));
         getDocs(result).then((querySnapshot) => {
+          //  console.log("--------333333333333333333");
             setIsloader(false);
             let selectedGroupListcopy = [];
             let spentAmount = 0;
@@ -148,6 +151,7 @@ export default function ExpensiveDashboard({ route, navigation }) {
             seSpentAmount(spentAmount);
             seTopupAmount(topupAmount);
             setExpensiveDataList(selectedGroupListcopy);
+            //console.log("--------444444444444444444",selectedGroupListcopy.length);
         })
     }
     const onChange = (event, selectedDate) => {
@@ -262,14 +266,34 @@ export default function ExpensiveDashboard({ route, navigation }) {
 
             <View style={styles.outer1}>
                 <ScrollView contentContainerStyle={styles.outer}>
-                    {expensiveDataList.map((expensiveRecord, index) => {
+                    <FlatList
+                        data={expensiveDataList}
+                        renderItem={({ item, index }) =>
+                            <View key={Math.random().toString()} style={[styles.groupContainer]}>
+                                <TouchableOpacity>
+                                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                                        <Text style={styles.groupName} >{item.Description}</Text>
+                                        <Pressable onPress={() => { deleteExpense(item) }}>
+                                            <Entypo style={styles.Delete} name="cross" size={18} />
+                                        </Pressable>
+                                    </View>
+                                    <View style={{ flexDirection: 'row', paddingTop: 4 }}>
+                                        <Text style={[styles.groupName, { width: '20%' }]} >{item.Amount}</Text>
+                                        <Text style={[styles.groupName, { width: '60%' }]} >{item.formatDate.toLocaleString()}</Text>
+                                        <Text style={[styles.groupName, { width: '20%' }]} >{item.CapturedBy}</Text>
+                                    </View>
+                                </TouchableOpacity>
+                            </View>
+                            }
+                    />
+                    {/* {expensiveDataList.map((expensiveRecord, index) => {
                         return (
                             //<TouchableOpacity  key={group.userId}  onPress={() => navigation.navigate('ExpensiveList')}>
                             <View key={Math.random().toString()} style={[styles.groupContainer]}>
-                                <TouchableOpacity onPress={() => navigation.navigate('ExpensiveList', { selectedGroup: group })}>
-                                    <View>
+                                <TouchableOpacity>
+                                    <View style={{flexDirection:'row',justifyContent:'space-between'}}>
                                         <Text style={styles.groupName} >{expensiveRecord.Description}</Text>
-                                        <Pressable onPress={() => { alert("ddd"); deleteExpense(expensiveRecord) }}>
+                                        <Pressable onPress={() => {deleteExpense(expensiveRecord) }}>
                                             <Entypo style={styles.Delete} name="cross" size={18} />
                                         </Pressable>
                                     </View>
@@ -282,7 +306,7 @@ export default function ExpensiveDashboard({ route, navigation }) {
                             </View>
                             //</TouchableOpacity>
                         );
-                    })}
+                    })} */}
                 </ScrollView>
             </View>
             <View style={[{ flexDirection: 'row' }]}>
@@ -316,8 +340,7 @@ const styles = StyleSheet.create({
     },
     Delete: {
         color: 'red',
-        marginLeft: 335,
-        marginTop: -10
+       // marginLeft: 335
     },
     amountField1: {
         backgroundColor: '#F94931',
